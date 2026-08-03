@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fechador Espacial SAT-1001 // Multiverso Temporal</title>
+    <style>
+        body {
+            background-color: #0b0f19;
+            color: #e2e8f0;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: #1a202c;
+            border: 2px solid #3182ce;
+            padding: 20px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 0 25px rgba(49, 130, 206, 0.4);
+            box-sizing: border-box;
+        }
+
+        h1 { color: #63b3ed; font-size: 1.2rem; text-align: center; margin: 0 0 5px 0; }
+        h2 { font-size: 0.75rem; color: #a0aec0; text-align: center; margin: 0 0 15px 0; }
+
+        .section-title {
+            font-size: 0.8rem;
+            color: #d6bcfa;
+            margin-bottom: 8px;
+            font-weight: bold;
+            border-left: 3px solid #9f7aea;
+            padding-left: 6px;
+        }
+
+        .grid-zones {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .btn-zone {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            border: 1px solid #4a5568;
+            padding: 10px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-align: left;
+            transition: all 0.2s;
+        }
+
+        .btn-zone:hover {
+            background-color: #3182ce;
+            border-color: #63b3ed;
+            color: #fff;
+        }
+
+        .btn-zone.active {
+            background-color: #2b6cb0;
+            border-color: #63b3ed;
+            box-shadow: 0 0 10px rgba(99, 179, 237, 0.5);
+            color: #fff;
+        }
+
+        .btn-zone span {
+            display: block;
+            font-size: 0.62rem;
+            color: #a0aec0;
+            margin-top: 2px;
+        }
+        .btn-zone.active span {
+            color: #e2e8f0;
+        }
+
+        .stamp-preview {
+            background-color: #0d1117;
+            border: 1px dashed #3182ce;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+
+        .stamp-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #63b3ed;
+            margin-bottom: 8px;
+            font-weight: bold;
+            border-bottom: 1px solid #21262d;
+            padding-bottom: 6px;
+        }
+
+        .stamp-body {
+            font-size: 0.75rem;
+            line-height: 1.5;
+            color: #c9d1d9;
+        }
+
+        .stamp-row {
+            margin-bottom: 4px;
+        }
+
+        .stamp-footer {
+            margin-top: 10px;
+            font-size: 0.65rem;
+            color: #8b949e;
+            word-break: break-all;
+            background: #161b22;
+            padding: 6px;
+            border-radius: 4px;
+            border: 1px solid #30363d;
+        }
+
+        .highlight {
+            color: #7ee787;
+            font-weight: bold;
+        }
+
+        .btn-action {
+            background-color: #238636;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 12px rgba(35, 134, 54, 0.4);
+            transition: background-color 0.2s;
+        }
+        .btn-action:hover { background-color: #2ea043; }
+
+        .upload-box {
+            border: 2px dashed #4a5568;
+            padding: 10px;
+            text-align: center;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            background: #111827;
+            cursor: pointer;
+        }
+        .upload-box input { display: none; }
+        .upload-label { font-size: 0.75rem; color: #a0aec0; cursor: pointer; }
+        
+        #canvas-output { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>FECHADOR ESPACIAL</h1>
+        <h2>SAT-1001 // Estación de Sello Multiverso</h2>
+
+        <div class="upload-box" onclick="document.getElementById('fileInput').click()">
+            <span class="upload-label" id="file-label">📷 Cargar Imagen o Reliquia para Sellar</span>
+            <input type="file" id="fileInput" accept="image/*" onchange="handleFile(event)">
+        </div>
+
+        <div class="section-title">🛰️ SELECCIONAR HUSO ORBITAL // SATÉLITE</div>
+        <div class="grid-zones">
+            <button class="btn-zone active" onclick="setZone('AR', 'Argentina (Base Central)', 'America/Argentina/Buenos_Aires', 'ARSAT-1 / COMSAT', event)">
+                🇦🇷 Argentina
+                <span>ARSAT-1 // Base Central</span>
+            </button>
+            <button class="btn-zone" onclick="setZone('PT', 'Portugal (Atlántico)', 'Europe/Lisbon', 'ISASAT-1 // Enlace', event)">
+                🇵🇹 Portugal
+                <span>ISASAT-1 // Enlace</span>
+            </button>
+            <button class="btn-zone" onclick="setZone('IT', 'Italia (Roma-Vaticano)', 'Europe/Rome', 'SICRAL-2 // Orbital', event)">
+                🇮🇹 Italia
+                <span>SICRAL-2 // Roma</span>
+            </button>
+            <button class="btn-zone" onclick="setZone('AE', 'Emiratos Árabes (Dubái)', 'Asia/Dubai', 'Al Yah 1 // Golfo', event)">
+                🇦🇪 Emiratos Árabes
+                <span>Al Yah 1 // Dubái</span>
+            </button>
+            <button class="btn-zone" onclick="setZone('IN', 'India (Deep Space Bangalore)', 'Asia/Kolkata', 'GSAT-30 // Bangalore', event)">
+                🇮🇳 India
+                <span>GSAT-30 // Bangalore</span>
+            </button>
+            <button class="btn-zone" onclick="setZone('CN', 'China (Estación Lunar Chang\'e)', 'Asia/Shanghai', 'Tianlian-2 // Lunar', event)">
+                🇨🇳 China
+                <span>Tianlian-2 // Lunar</span>
+            </button>
+        </div>
+
+        <div class="section-title">🔮 ESTAMPIYA OBTENIDA // HASH INMUTABLE</div>
+        <div class="stamp-preview">
+            <div class="stamp-header">
+                <span id="preview-sat">🛰️ SAT: ARSAT-1 // POSTA 1001</span>
+                <span>[ ATOMIC HOLOGRAPHIC ]</span>
+            </div>
+            <div class="stamp-body">
+                <div class="stamp-row">📍 <b>Sector:</b> <span id="preview-zone-name">Argentina (Base Central)</span></div>
+                <div class="stamp-row">⏱️ <b>Fechado Exacto:</b> <span class="highlight" id="preview-time">--</span></div>
+                <div class="stamp-row">⚛️ <b>Sello Atómico:</b> <span style="color: #63b3ed;">Sincronizado</span></div>
+            </div>
+            <div class="stamp-footer">
+                <b>HASH:</b> <span id="preview-hash">0x...</span><br>
+                <b>PESO ESTELAR:</b> <span id="preview-size">1133.78 KB</span>
+            </div>
+        </div>
+
+        <button class="btn-action" onclick="descargarReliquia()">✨ Sellar Cuánticamente y Descargar!</button>
+        <canvas id="canvas-output"></canvas>
+    </div>
+
+    <script>
+        let currentZoneCode = 'AR';
+        let currentZoneTitle = 'Argentina (Base Central)';
+        let currentTz = 'America/Argentina/Buenos_Aires';
+        let currentSat = 'ARSAT-1 / COMSAT';
+        let fileSize = '1133.78 KB';
+        let generatedHash = '0x613398b758b29f0e1b7de5';
+        let uploadedImage = null;
+
+        function setZone(code, title, tz, sat, evt) {
+            currentZoneCode = code;
+            currentZoneTitle = title;
+            currentTz = tz;
+            currentSat = sat;
+
+            document.querySelectorAll('.btn-zone').forEach(btn => btn.classList.remove('active'));
+            evt.currentTarget.classList.add('active');
+
+            updateStampData();
+        }
+
+        function updateStampData() {
+            document.getElementById('preview-sat').innerText = `🛰️ SAT: ${currentSat} // POSTA 1001`;
+            document.getElementById('preview-zone-name').innerText = currentZoneTitle;
+
+            const now = new Date();
+            try {
+                const options = {
+                    timeZone: currentTz,
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                };
+                const formatter = new Intl.DateTimeFormat('sv-SE', options);
+                const formatted = formatter.format(now).replace(' ', ' // ');
+                const millis = String(now.getMilliseconds()).padStart(3, '0');
+                document.getElementById('preview-time').innerText = `${formatted}.${millis}`;
+            } catch (e) {
+                document.getElementById('preview-time').innerText = now.toISOString().replace('T', ' // ').slice(0, 23);
+            }
+
+            let hashVal = '0x';
+            const chars = 'abcdef0123456789';
+            for (let i = 0; i < 22; i++) {
+                hashVal += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            generatedHash = hashVal;
+            document.getElementById('preview-hash').innerText = generatedHash;
+            document.getElementById('preview-size').innerText = fileSize;
+        }
+
+        function handleFile(event) {
+            const file = event.target.files[0];
+            if (file) {
+                fileSize = (file.size / 1024).toFixed(2) + ' KB';
+                document.getElementById('file-label').innerText = `✅ Archivo: ${file.name}`;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        uploadedImage = img;
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+                updateStampData();
+            }
+        }
+
+        function descargarReliquia() {
+            const canvas = document.getElementById('canvas-output');
+            const ctx = canvas.getContext('2d');
+
+            let imgW = uploadedImage ? uploadedImage.width : 800;
+            let imgH = uploadedImage ? uploadedImage.height : 1000;
+            
+            const barHeight = 130;
+            canvas.width = imgW;
+            canvas.height = imgH + barHeight;
+
+            // 1. Dibujar la imagen base
+            if (uploadedImage) {
+                ctx.drawImage(uploadedImage, 0, 0, imgW, imgH);
+            } else {
+                ctx.fillStyle = '#111827';
+                ctx.fillRect(0, 0, imgW, imgH);
+                ctx.fillStyle = '#63b3ed';
+                ctx.font = 'bold 30px Courier New';
+                ctx.fillText('⚡ RELIQUIA CUÁNTICA SIN IMAGEN ⚡', 50, imgH / 2);
+            }
+
+            // 2. Aplicar Marca de Agua Cuántica Múltiple y Cruzada (Patrón Visible Garantizado)
+            ctx.save();
+            const fontSize = Math.max(24, Math.floor(imgW / 16));
+            ctx.font = `bold ${fontSize}px Courier New`;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.18)'; // Visibilidad perfecta
+            ctx.textAlign = 'center';
+
+            // Rotar el plano para hacer la diagonal
+            ctx.rotate(-Math.PI / 5);
+
+            // Dibujar varias líneas diagonales en patrón para que cubra toda el área de punta a punta
+            const stepY = Math.max(150, imgH / 4);
+            for (let y = -imgH; y < imgH * 2; y += stepY) {
+                ctx.fillText("ESTAMPADO CUÁNTICO // SAT-1001 // VENTANIYA!", 0, y);
+            }
+            ctx.restore();
+
+            // 3. Dibujar la franja inferior holográfica y atómica
+            ctx.fillStyle = '#0b0f19';
+            ctx.fillRect(0, imgH, imgW, barHeight);
+
+            ctx.strokeStyle = '#3182ce';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(0, imgH);
+            ctx.lineTo(imgW, imgH);
+            ctx.stroke();
+
+            const timeText = document.getElementById('preview-time').innerText;
+            
+            ctx.fillStyle = '#ffffff';
+            ctx.font = `bold ${Math.max(14, Math.floor(imgW / 45))}px Courier New`;
+            ctx.fillText(`POSTA 1001 // FECHA: ${timeText}`, 20, imgH + 40);
+
+            ctx.fillStyle = '#7ee787';
+            ctx.font = `bold ${Math.max(12, Math.floor(imgW / 50))}px Courier New`;
+            ctx.fillText(`HASH: ${generatedHash} | SECTOR: ${currentZoneCode} | PESO: ${fileSize}`, 20, imgH + 80);
+
+            ctx.fillStyle = '#a0aec0';
+            ctx.font = `italic ${Math.max(10, Math.floor(imgW / 60))}px Courier New`;
+            ctx.fillText(`SAT: ${currentSat} // SELLO ATÓMICO VERIFICADO`, 20, imgH + 112);
+
+            // 4. Descarga automática del archivo definitivo
+            const link = document.createElement('a');
+            link.download = `EstampadoCuantico_${currentZoneCode}_${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        setInterval(updateStampData, 100);
+        updateStampData();
+    </script>
+</body>
+</html>
